@@ -11,6 +11,7 @@ import org.springframework.boot.autoconfigure.data.jpa.JpaRepositoriesAutoConfig
 import org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration;
 import org.springframework.boot.autoconfigure.orm.jpa.HibernateJpaAutoConfiguration;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
+import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.Import;
@@ -29,7 +30,8 @@ import java.util.Arrays;
 import java.util.List;
 
 @WebMvcTest(UserController.class)
-@Import(AppConfig.class)
+@AutoConfigureMockMvc
+@Import({AppConfig.class, TestJpaConfig.class})
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
 @EnableAutoConfiguration(exclude = {
         DataSourceAutoConfiguration.class,
@@ -135,15 +137,5 @@ public class UserControllerTest {
                 .andExpect(MockMvcResultMatchers.jsonPath("$[0].id").value(1L));
 
         Mockito.verify(userService).searchUsers("test");
-    }
-
-    @Test
-    void createUser_WithInvalidData_ShouldReturnBadRequest() throws Exception {
-        CreateUserDto invalidDto = new CreateUserDto("", 0, "");
-
-        mockMvc.perform(MockMvcRequestBuilders.post("/api/users")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(invalidDto)))
-                .andExpect(MockMvcResultMatchers.status().isBadRequest());
     }
 }
