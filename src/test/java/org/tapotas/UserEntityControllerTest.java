@@ -38,7 +38,7 @@ import java.util.List;
         HibernateJpaAutoConfiguration.class,
         JpaRepositoriesAutoConfiguration.class
 })
-public class UserControllerTest {
+public class UserEntityControllerTest {
     @Autowired
     private MockMvc mockMvc;
 

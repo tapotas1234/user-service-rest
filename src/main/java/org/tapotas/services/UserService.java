@@ -6,7 +6,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.tapotas.dto.CreateUserDto;
 import org.tapotas.dto.UserDto;
-import org.tapotas.entities.User;
+import org.tapotas.entities.UserEntity;
 import org.tapotas.repositories.UserRepository;
 
 import java.util.List;
@@ -29,39 +29,39 @@ public class UserService {
             throw new RuntimeException("Email already exists");
         }
 
-        User user = modelMapper.map(createUserDto, User.class);
-        User savedUser = userRepository.save(user);
-        return modelMapper.map(savedUser, UserDto.class);
+        UserEntity userEntity = modelMapper.map(createUserDto, UserEntity.class);
+        UserEntity savedUserEntity = userRepository.save(userEntity);
+        return modelMapper.map(savedUserEntity, UserDto.class);
     }
 
     @Transactional(readOnly = true)
     public UserDto getUserById(Long id) {
-        User user = userRepository.findById(id)
+        UserEntity userEntity = userRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("User not found"));
-        return modelMapper.map(user, UserDto.class);
+        return modelMapper.map(userEntity, UserDto.class);
     }
 
     @Transactional(readOnly = true)
     public List<UserDto> getAllUsers() {
         return userRepository.findAll().stream()
-                .map(user -> modelMapper.map(user, UserDto.class))
+                .map(userEntity -> modelMapper.map(userEntity, UserDto.class))
                 .collect(Collectors.toList());
     }
 
     @Transactional
     public UserDto updateUser(Long id, UserDto userDto) {
-        User existingUser = userRepository.findById(id)
+        UserEntity existingUserEntity = userRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("User not found"));
 
-        if (!existingUser.getName().equals(userDto.getName())) {
+        if (!existingUserEntity.getName().equals(userDto.getName())) {
             if (userRepository.existsByName(userDto.getName())) {
                 throw new RuntimeException("Username already exists");
             }
         }
 
-        modelMapper.map(userDto, existingUser);
-        User updatedUser = userRepository.save(existingUser);
-        return modelMapper.map(updatedUser, UserDto.class);
+        modelMapper.map(userDto, existingUserEntity);
+        UserEntity updatedUserEntity = userRepository.save(existingUserEntity);
+        return modelMapper.map(updatedUserEntity, UserDto.class);
     }
 
     @Transactional
@@ -75,7 +75,7 @@ public class UserService {
     @Transactional(readOnly = true)
     public List<UserDto> searchUsers(String query) {
         return userRepository.searchUsers(query).stream()
-                .map(user -> modelMapper.map(user, UserDto.class))
+                .map(userEntity -> modelMapper.map(userEntity, UserDto.class))
                 .collect(Collectors.toList());
     }
 }
