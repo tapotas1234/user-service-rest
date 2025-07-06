@@ -5,7 +5,7 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>org.tapotas</groupId>
-    <artifactId>user-service-rest</artifactId>
+    <artifactId>userEntity-service-rest</artifactId>
     <version>1.0</version>
     <packaging>war</packaging>
     <parent>
