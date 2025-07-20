@@ -20,10 +20,6 @@
         <maven.compiler.source>18</maven.compiler.source>
         <maven.compiler.target>18</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <jackson.version>2.15.0</jackson.version>
-        <jakarta.servlet.version>6.0.0</jakarta.servlet.version>
-        <lombok.version>1.18.32</lombok.version>
-        <jakarta.persistence.version>3.2.0</jakarta.persistence.version>
         <modelmapper.version>3.1.1</modelmapper.version>
         <postgresql.version>42.7.7</postgresql.version>
         <jakarta.validation.version>3.0.2</jakarta.validation.version>
@@ -49,6 +45,11 @@
             <groupId>com.h2database</groupId>
             <artifactId>h2</artifactId>
             <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.springframework.kafka</groupId>
+            <artifactId>spring-kafka</artifactId>
         </dependency>
 
         <dependency>
@@ -88,7 +89,6 @@
             <groupId>org.postgresql</groupId>
             <artifactId>postgresql</artifactId>
             <version>${postgresql.version}</version>
-            <scope>runtime</scope>
         </dependency>
 
         <dependency>

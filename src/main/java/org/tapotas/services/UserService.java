@@ -2,11 +2,14 @@ package org.tapotas.services;
 
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.tapotas.dto.CreateUserDto;
 import org.tapotas.dto.UserDto;
 import org.tapotas.entities.UserEntity;
+import org.tapotas.model.EmailNotificationMessage;
 import org.tapotas.repositories.UserRepository;
 
 import java.util.List;
@@ -15,6 +18,10 @@ import java.util.stream.Collectors;
 @Service
 @RequiredArgsConstructor
 public class UserService {
+
+    @Value("${kafka.topic.email-notifications}")
+    private String TOPIC;
+    private final KafkaTemplate<String, Object> kafkaTemplate;
 
     private final UserRepository userRepository;
     private final ModelMapper modelMapper;
@@ -28,6 +35,13 @@ public class UserService {
         if (userRepository.existsByEmail(createUserDto.getEmail())) {
             throw new RuntimeException("Email already exists");
         }
+
+        EmailNotificationMessage message = new EmailNotificationMessage(
+                createUserDto.getEmail(),
+                "Ваш аккаунт успешно создан",
+                "Сообщение о создании аккаунта");
+
+        kafkaTemplate.send(TOPIC, message);
 
         UserEntity userEntity = modelMapper.map(createUserDto, UserEntity.class);
         UserEntity savedUserEntity = userRepository.save(userEntity);
@@ -69,6 +83,15 @@ public class UserService {
         if (!userRepository.existsById(id)) {
             throw new RuntimeException("User not found");
         }
+
+        UserDto user = getUserById(id);
+
+        EmailNotificationMessage message = new EmailNotificationMessage(
+                user.getEmail(),
+                "Ваш аккаунт удален",
+                "Сообщение об удалении аккаунта");
+        kafkaTemplate.send(TOPIC, message);
+
         userRepository.deleteById(id);
     }
 
